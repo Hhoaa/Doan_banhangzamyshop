@@ -203,10 +203,10 @@ class SupabaseReviewService {
 
       // Gọi API PHP
       final response = await http.post(
-        Uri.parse('http://localhost:3000/api/add_review.php'),
+        Uri.parse('https://api-binhluan.onrender.com/add_review'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(reviewData),
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(const Duration(seconds: 60));
 
       print('[DEBUG] Trạng thái phản hồi API: ${response.statusCode}');
       print('[DEBUG] Nội dung phản hồi API: ${response.body}');

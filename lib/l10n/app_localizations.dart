@@ -160,7 +160,7 @@ class AppLocalizations {
       'remove_item': 'Xóa sản phẩm',
       'update_cart': 'Cập nhật giỏ hàng',
       'added_to_cart': 'Đã thêm vào giỏ hàng',
-      'failed_to_add_cart': 'Lỗi khi thêm vào giỏ hàng',
+      'failed_to_add_cart': 'Số lượng sản phẩm này trong giỏ hàng đã vượt quá số lượng tồn kho',
       'cart_item_not_found':
           'Không tìm thấy sản phẩm trong giỏ hàng. Vui lòng thử lại.',
 
@@ -177,7 +177,7 @@ class AppLocalizations {
       'place_order': 'Đặt hàng',
       'processing_payment': 'Đang xử lý thanh toán...',
       'order_placed_success': 'Đặt hàng thành công',
-      'order_placed_failed': 'Đặt hàng thất bại',
+      'order_placed_failed': 'Đã quá hạn 7 ngày. Quý khách không thể hoàn hàng',
       'payment_failed': 'Thanh toán thất bại',
       'please_select_address': 'Vui lòng chọn địa chỉ giao hàng',
       'please_select_payment': 'Vui lòng chọn phương thức thanh toán',

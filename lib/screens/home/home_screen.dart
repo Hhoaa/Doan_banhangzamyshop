@@ -568,149 +568,229 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDiscountCard(Map<String, dynamic> discount) {
-    final code = (discount['code'] ?? '').toString();
-    final title = (discount['noi_dung'] ?? '').toString();
-    final description = (discount['mo_ta'] ?? '').toString();
-    final minOrder = (discount['don_gia_toi_thieu'] as num?)?.toDouble() ?? 0;
-    final endDateStr = discount['ngay_ket_thuc']?.toString();
-    DateTime? endDate;
-    if (endDateStr != null && endDateStr.isNotEmpty) {
-      endDate = DateTime.tryParse(endDateStr);
-    }
+Widget _buildDiscountCard(Map<String, dynamic> discount) {
+  final code = (discount['code'] ?? '').toString();
+  final minOrder = (discount['don_gia_toi_thieu'] as num?)?.toDouble() ?? 0;
+  final endDateStr = discount['ngay_ket_thuc']?.toString();
+  DateTime? endDate;
+  if (endDateStr != null && endDateStr.isNotEmpty) {
+    endDate = DateTime.tryParse(endDateStr);
+  }
+  final discountLabel = _formatDiscountValue(discount);
 
-    final discountLabel = _formatDiscountValue(discount);
-    final borderColor = AppColors.accentRed.withOpacity(0.3);
-
-    return Container(
+  return GestureDetector(
+    onTap: () {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (_) {
+          final description = (discount['mo_ta'] ?? '').toString();
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 60,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Icon(Icons.local_offer, color: AppColors.accentRed),
+                      const SizedBox(width: 8),
+                      Text(
+                        'MÃ GIẢM GIÁ',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    code,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accentRed,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    discountLabel,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accentRed,
+                    ),
+                  ),
+                  if (minOrder > 0) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      'Đơn tối thiểu: ${CurrencyFormatter.formatVND(minOrder)}',
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ],
+                  if (endDate != null) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      'HSD: ${DateFormat('dd/MM/yyyy').format(endDate)}',
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ],
+                  if (description.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      description,
+                      style: const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  Center(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentRed,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 28,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.copy, size: 18),
+                      label: const Text(
+                        'Sao chép mã',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      onPressed: () => _copyDiscountCode(code),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    },
+    child: Container(
       width: 260,
       margin: const EdgeInsets.only(right: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        gradient: LinearGradient(
-          colors: [
-            AppColors.accentRed.withOpacity(0.85),
-            AppColors.accentRed.withOpacity(0.65),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: borderColor, width: 1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.accentRed.withOpacity(0.15),
-            blurRadius: 12,
+            blurRadius: 10,
             offset: const Offset(0, 6),
           ),
         ],
+        border: Border.all(
+          color: AppColors.accentRed.withOpacity(0.4),
+          width: 1.2,
+        ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.18),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              code,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
-              ),
+          Positioned(
+            right: -15,
+            top: -15,
+            child: Icon(
+              Icons.local_offer_rounded,
+              color: AppColors.accentRed.withOpacity(0.15),
+              size: 60,
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            discountLabel,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
-          ),
-          if (title.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.discount, color: AppColors.accentRed),
+                  const SizedBox(width: 6),
+                  Text(
+                    discountLabel,
+                    style: const TextStyle(
+                      color: AppColors.accentRed,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          if (description.isNotEmpty) ...[
-            const SizedBox(height: 6),
-            Text(
-              description,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.85),
-                fontSize: 13,
-                height: 1.3,
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Mã: $code',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => _copyDiscountCode(code),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentRed.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Copy',
+                        style: TextStyle(
+                          color: AppColors.accentRed,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          if (minOrder > 0) ...[
-            const SizedBox(height: 6),
-            Text(
-              (AppLocalizations.of(context).locale.languageCode == 'vi'
-                      ? 'Đơn tối thiểu '
-                      : 'Min order ') +
-                  CurrencyFormatter.formatVND(minOrder),
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 12,
-              ),
-            ),
-          ],
-          if (endDate != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              'HSD: ${DateFormat('dd/MM/yyyy').format(endDate)}',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 12,
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.accentRed,
-                backgroundColor: Colors.white,
-                side: BorderSide(color: Colors.white.withOpacity(0.6)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 6),
+              if (minOrder > 0)
+                Text(
+                  'Tối thiểu: ${CurrencyFormatter.formatVND(minOrder)}',
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-              ),
-              onPressed: () => _copyDiscountCode(code),
-              child: Text(
-                AppLocalizations.of(context).translate('apply'),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
+              if (endDate != null)
+                Text(
+                  'HSD: ${DateFormat('dd/MM/yyyy').format(endDate)}',
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
-              ),
-            ),
+            ],
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   String _formatDiscountValue(Map<String, dynamic> discount) {
     final type = discount['loai_giam_gia']?.toString();
@@ -1269,3 +1349,4 @@ class _CollectionBanner extends StatelessWidget {
     );
   }
 }
+
