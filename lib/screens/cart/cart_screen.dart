@@ -12,7 +12,7 @@ import '../../providers/cart_provider.dart';
 import '../../widgets/ai_chat/bubble_visibility.dart';
 import '../../l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
-
+// giỏ hàng
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
