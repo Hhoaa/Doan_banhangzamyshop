@@ -1,6 +1,6 @@
 class Banner {
   final int maBanner;  // ĐỔI String -> int
-  final String hinhAnh;
+  final String hinhAnh; // Hình ảnh
   final bool trangThai;
   final DateTime ngayTao;
   final DateTime? ngayCapNhat;
